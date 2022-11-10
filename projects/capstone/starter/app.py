@@ -1,8 +1,9 @@
 import os
 from flask import Flask, request, abort, jsonify
-from models import db, setup_db, db_drop_and_create_all, Movie, Actor
 from flask_cors import CORS
 from auth import AuthError, requires_auth
+from models import db, setup_db, db_drop_and_create_all, Movie, Actor
+
 
 def create_app(test_config=None):
 
@@ -13,14 +14,11 @@ def create_app(test_config=None):
     @app.route('/')
     def get_greeting():
         excited = os.environ['EXCITED']
-        greeting = "Hello" 
-        if excited == 'true': 
-            greeting = greeting + "!!!!! Welcome to Casting Agency."
+        greeting = 'Hello!'
+        if excited == 'true':
+            greeting = greeting + '! Welcome to the 444y Casting Agency.'
         return greeting
 
-    # @app.route('/coolkids')
-    # def be_cool():
-    #     return "Be cool, man, be coooool! You're almost a FSND grad!"
     '''
     Use the after_request decorator to set Access-Control-Allow
     '''
@@ -37,12 +35,12 @@ def create_app(test_config=None):
     # ROUTES
     '''
         GET /movies
-        returns status code 200 and json {"success": True, "movies": movies} where movies is the list of movies
+        returns status code 200 and json {"success": True, "movies": movies}
+                where movies is the list of movies
             or appropriate status code indicating reason for failure
-    '''            
-
+    '''
     @app.route('/movies')
-    @requires_auth('get:movies')   
+    @requires_auth('get:movies')
     def get_movies(token):
         movies = Movie.query.all()
 
@@ -56,12 +54,12 @@ def create_app(test_config=None):
             }
         )
 
-
     '''
         POST /movies
             it should create a new row in the movies table
             it should require the 'post:movies' permission
-        returns status code 200 and json {"success": True, "movies": movie} where movie an array containing only the newly created movie
+        returns status code 200 and json {"success": True, "movies": movie}
+                where movie an array containing only the newly created movie
             or appropriate status code indicating reason for failure
     '''
     @app.route("/movies", methods=["POST"])
@@ -72,12 +70,10 @@ def create_app(test_config=None):
         try:
 
             movie = Movie(
-                title = body.get('title', None),
-                release_date = body.get('release_date', None)
+                title=body.get('title', None),
+                release_date=body.get('release_date', None)
             )
-            
             movie.insert()
-
         except:
             abort(422)
 
@@ -94,7 +90,8 @@ def create_app(test_config=None):
             it should respond with a 404 error if <id> is not found
             it should update the corresponding row for <id>
             it should require the 'patch:movies' permission
-        returns status code 200 and json {"success": True, "movies": movie} where movie an array containing only the updated movie
+        returns status code 200 and json {"success": True, "movies": movie}
+                where movie an array containing only the updated movie
             or appropriate status code indicating reason for failure
     '''
     @app.route("/movies/<int:id>", methods=["PATCH"])
@@ -118,7 +115,6 @@ def create_app(test_config=None):
             if req_release_date is not None:
                 movie.release_date = req_release_date
                 movie.update()
-                
         except Exception:
             abort(422)
 
@@ -135,7 +131,8 @@ def create_app(test_config=None):
             it should respond with a 404 error if <id> is not found
             it should delete the corresponding row for <id>
             it should require the 'delete:movies' permission
-        returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
+        returns status code 200 and json {"success": True, "delete": id}
+                where id is the id of the deleted record
             or appropriate status code indicating reason for failure
     '''
     @app.route("/movies/<int:id>", methods=["DELETE"])
@@ -160,12 +157,12 @@ def create_app(test_config=None):
 
     '''
         GET /actors
-        returns status code 200 and json {"success": True, "actors": actors} where actors is the list of actors
+        returns status code 200 and json {"success": True, "actors": actors}
+                where actors is the list of actors
             or appropriate status code indicating reason for failure
-    '''            
-
+    '''
     @app.route('/actors')
-    @requires_auth('get:actors')   
+    @requires_auth('get:actors')
     def get_actors(token):
         actors = Actor.query.all()
 
@@ -179,12 +176,12 @@ def create_app(test_config=None):
             }
         )
 
-
     '''
         POST /actors
             it should create a new row in the actors table
             it should require the 'post:actors' permission
-        returns status code 200 and json {"success": True, "actors": actor} where actor array containing only the newly created actor
+        returns status code 200 and json {"success": True, "actors": actor}
+                where actor array containing only the newly created actor
             or appropriate status code indicating reason for failure
     '''
     @app.route("/actors", methods=["POST"])
@@ -195,11 +192,10 @@ def create_app(test_config=None):
         try:
 
             actor = Actor(
-                name = body.get('name', None),
-                age = body.get('age', None),
-                gender = body.get('gender', None)
+                name=body.get('name', None),
+                age=body.get('age', None),
+                gender=body.get('gender', None)
             )
-            
             actor.insert()
 
         except:
@@ -218,7 +214,8 @@ def create_app(test_config=None):
             it should respond with a 404 error if <id> is not found
             it should update the corresponding row for <id>
             it should require the 'patch:actors' permission
-        returns status code 200 and json {"success": True, "actors": actors} where actor array containing only the updated actor
+        returns status code 200 and json {"success": True, "actors": actors}
+                where actor array containing only the updated actor
             or appropriate status code indicating reason for failure
     '''
     @app.route("/actors/<int:id>", methods=["PATCH"])
@@ -264,7 +261,8 @@ def create_app(test_config=None):
             it should respond with a 404 error if <id> is not found
             it should delete the corresponding row for <id>
             it should require the 'delete:movies' permission
-        returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
+        returns status code 200 and json {"success": True, "delete": id}
+                where id is the id of the deleted record
             or appropriate status code indicating reason for failure
     '''
     @app.route("/actors/<int:id>", methods=["DELETE"])
@@ -287,7 +285,6 @@ def create_app(test_config=None):
             }
         )
 
-
     # Error Handling
 
     '''
@@ -301,7 +298,6 @@ def create_app(test_config=None):
             "message": "unprocessable"
         }), 422
 
-
     '''
     implement error handler for 404
     '''
@@ -312,7 +308,6 @@ def create_app(test_config=None):
             "error": 404,
             "message": "resource not found"
         }), 404
-
 
     '''
     implement error handler for AuthError
@@ -330,11 +325,10 @@ def create_app(test_config=None):
 app = create_app()
 
 '''
-Initialize the datbase
+Initialize the database
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 '''
 db_drop_and_create_all()
 
 if __name__ == '__main__':
     app.run()
-

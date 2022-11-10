@@ -4,7 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 from settings import DB_NAME, DB_USER, DB_PASSWORD
 
-database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER, DB_PASSWORD, 'localhost:5432', DB_NAME)
+database_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,
+                                                  DB_PASSWORD,
+                                                  'localhost:5432',
+                                                  DB_NAME)
 
 db = SQLAlchemy()
 
@@ -12,6 +15,8 @@ db = SQLAlchemy()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
+
+
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -23,40 +28,43 @@ def setup_db(app, database_path=database_path):
 db_drop_and_create_all()
     drops the database tables and starts fresh
     can be used to initialize a clean database
-    !!NOTE you can change the database_filename variable to have multiple verisons of a database
+    !!NOTE you can change the database_filename variable
+        to have multiple verisons of a database
 '''
+
+
 def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
-    
-    # add one demo row to each table
- 
+
+    # add two demo rows to each table
+
     movie_1 = Movie(
-        title = 'White Christmas',
-        release_date = '12/24/1975',
+        title='White Christmas',
+        release_date='12/24/1975'
     )
 
     movie_1.insert()
 
     movie2 = Movie(
-        title = 'Blood Moon',
-        release_date = '11/08/2005',
+        title='Blood Moon',
+        release_date='11/08/2005'
     )
 
     movie2.insert()
 
     actor_1 = Actor(
-        name = 'Paula Rossi',
-        age = 21,
-        gender = 'Female' 
+        name='Paula Rossi',
+        age=21,
+        gender='Female'
     )
 
     actor_1.insert()
 
     actor_2 = Actor(
-        name = 'Bruno Conti',
-        age = 26,
-        gender = 'Male' 
+        name='Bruno Conti',
+        age=26,
+        gender='Male'
     )
 
     actor_2.insert()
@@ -65,6 +73,8 @@ def db_drop_and_create_all():
 Movie
 a persistent movie entity, extends the base SQLAlchemy Model
 '''
+
+
 class Movie(db.Model):
     __tablename__ = 'movies'
     id = Column(Integer, primary_key=True)
@@ -97,7 +107,9 @@ class Movie(db.Model):
 Actor
 a persistent actor entity, extends the base SQLAlchemy Model
 '''
-class Actor(db.Model):  
+
+
+class Actor(db.Model):
     __tablename__ = 'actors'
 
     id = Column(Integer, primary_key=True)
@@ -108,7 +120,7 @@ class Actor(db.Model):
     def __init__(self, name, age, gender):
         self.name = name
         self.age = age
-        self.gender = gender   
+        self.gender = gender
 
     def insert(self):
         db.session.add(self)
