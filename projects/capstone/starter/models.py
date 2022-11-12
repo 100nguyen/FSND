@@ -24,6 +24,7 @@ def setup_db(app, database_path=database_path):
     db.init_app(app)
     db.create_all()
 
+
 '''
 db_drop_and_create_all()
     drops the database tables and starts fresh
@@ -40,21 +41,21 @@ def db_drop_and_create_all():
     # add two demo rows to each table
 
     movie_1 = Movie(
-        title='White Christmas',
-        release_date='12/24/1975'
+        title='Hunt for The Red Tsunami',
+        release_date='11/08/2022'
     )
 
     movie_1.insert()
 
     movie2 = Movie(
-        title='Blood Moon',
-        release_date='11/08/2005'
+        title='Stack Is Half Full',
+        release_date='11/11/2011'
     )
 
     movie2.insert()
 
     actor_1 = Actor(
-        name='Paula Rossi',
+        name='Helen Heroku',
         age=21,
         gender='Female'
     )
@@ -62,12 +63,13 @@ def db_drop_and_create_all():
     actor_1.insert()
 
     actor_2 = Actor(
-        name='Bruno Conti',
+        name='Sammy Sudoku',
         age=26,
         gender='Male'
     )
 
     actor_2.insert()
+
 
 '''
 Movie
@@ -102,6 +104,7 @@ class Movie(db.Model):
             'title': self.title,
             'release_date': self.release_date
         }
+
 
 '''
 Actor

@@ -64,6 +64,7 @@ def get_token_auth_header():
     token = parts[1]
     return token
 
+
 '''
 @check_permissions(permission, payload) method
     @INPUTS
@@ -91,6 +92,7 @@ def check_permissions(permission, payload):
             'description': 'Permission not found.'
         }, 403)
     return True
+
 
 '''
 @verify_decode_jwt(token) method
@@ -157,6 +159,7 @@ def verify_decode_jwt(token):
                 'code': 'invalid_header',
                 'description': 'Unable to find the appropriate key.'
             }, 400)
+
 
 '''
 @requires_auth(permission) decorator method

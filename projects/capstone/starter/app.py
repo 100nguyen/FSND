@@ -74,7 +74,7 @@ def create_app(test_config=None):
                 release_date=body.get('release_date', None)
             )
             movie.insert()
-        except:
+        except Exception:
             abort(422)
 
         return jsonify(
@@ -198,7 +198,7 @@ def create_app(test_config=None):
             )
             actor.insert()
 
-        except:
+        except Exception:
             abort(422)
 
         return jsonify(
@@ -321,6 +321,7 @@ def create_app(test_config=None):
         }), e.status_code
 
     return app
+
 
 app = create_app()
 
