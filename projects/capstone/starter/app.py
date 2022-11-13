@@ -14,9 +14,9 @@ def create_app(test_config=None):
     @app.route('/')
     def get_greeting():
         excited = os.environ['EXCITED']
-        greeting = 'Hello!'
+        greeting = 'Whazza!'
         if excited == 'true':
-            greeting = greeting + '! Welcome to the 444y Casting Agency.'
+            greeting = greeting + '! Welcome to the Dynamic Casting!'
         return greeting
 
     '''
@@ -59,7 +59,7 @@ def create_app(test_config=None):
             it should create a new row in the movies table
             it should require the 'post:movies' permission
         returns status code 200 and json {"success": True, "movies": movie}
-                where movie an array containing only the newly created movie
+                where the movie array contains only the newly created movie
             or appropriate status code indicating reason for failure
     '''
     @app.route("/movies", methods=["POST"])
@@ -91,7 +91,7 @@ def create_app(test_config=None):
             it should update the corresponding row for <id>
             it should require the 'patch:movies' permission
         returns status code 200 and json {"success": True, "movies": movie}
-                where movie an array containing only the updated movie
+                where the movie array contains only the updated movie
             or appropriate status code indicating reason for failure
     '''
     @app.route("/movies/<int:id>", methods=["PATCH"])
@@ -131,7 +131,7 @@ def create_app(test_config=None):
             it should respond with a 404 error if <id> is not found
             it should delete the corresponding row for <id>
             it should require the 'delete:movies' permission
-        returns status code 200 and json {"success": True, "delete": id}
+        returns status code 200 and json {"success": True, "deleted_id": id}
                 where id is the id of the deleted record
             or appropriate status code indicating reason for failure
     '''
@@ -151,7 +151,7 @@ def create_app(test_config=None):
         return jsonify(
             {
                 'success': True,
-                'delete': id
+                'deleted_id': id
             }
         )
 
@@ -181,7 +181,7 @@ def create_app(test_config=None):
             it should create a new row in the actors table
             it should require the 'post:actors' permission
         returns status code 200 and json {"success": True, "actors": actor}
-                where actor array containing only the newly created actor
+                where the actor array contains only the newly created actor
             or appropriate status code indicating reason for failure
     '''
     @app.route("/actors", methods=["POST"])
@@ -215,7 +215,7 @@ def create_app(test_config=None):
             it should update the corresponding row for <id>
             it should require the 'patch:actors' permission
         returns status code 200 and json {"success": True, "actors": actors}
-                where actor array containing only the updated actor
+                where the actor array contains only the updated actor
             or appropriate status code indicating reason for failure
     '''
     @app.route("/actors/<int:id>", methods=["PATCH"])
@@ -261,7 +261,7 @@ def create_app(test_config=None):
             it should respond with a 404 error if <id> is not found
             it should delete the corresponding row for <id>
             it should require the 'delete:movies' permission
-        returns status code 200 and json {"success": True, "delete": id}
+        returns status code 200 and json {"success": True, "deleted_id": id}
                 where id is the id of the deleted record
             or appropriate status code indicating reason for failure
     '''
@@ -281,7 +281,7 @@ def create_app(test_config=None):
         return jsonify(
             {
                 'success': True,
-                'delete': id
+                'deleted_id': id
             }
         )
 
@@ -293,9 +293,9 @@ def create_app(test_config=None):
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
-            "success": False,
-            "error": 422,
-            "message": "unprocessable"
+            'success': False,
+            'error': 422,
+            'message': "unprocessable"
         }), 422
 
     '''
@@ -304,9 +304,9 @@ def create_app(test_config=None):
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
-            "success": False,
-            "error": 404,
-            "message": "resource not found"
+            'success': False,
+            'error': 404,
+            'message': "resource not found"
         }), 404
 
     '''
@@ -315,9 +315,9 @@ def create_app(test_config=None):
     @app.errorhandler(AuthError)
     def auth_error(e):
         return jsonify({
-            "success": False,
-            "error": e.status_code,
-            "message": e.error['description']
+            'success': False,
+            'error': e.status_code,
+            'message': e.error['description']
         }), e.status_code
 
     return app
