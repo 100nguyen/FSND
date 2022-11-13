@@ -80,8 +80,8 @@ a persistent movie entity, extends the base SQLAlchemy Model
 class Movie(db.Model):
     __tablename__ = 'movies'
     id = Column(Integer, primary_key=True)
-    title = Column(String)
-    release_date = Column(String)
+    title = Column(String(256), nullable=False)
+    release_date = Column(String(20), nullable=False)
 
     def __init__(self, title, release_date):
         self.title = title
@@ -116,9 +116,9 @@ class Actor(db.Model):
     __tablename__ = 'actors'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    age = Column(Integer)
-    gender = Column(String)
+    name = Column(String(256), nullable=False)
+    age = Column(Integer, nullable=False)
+    gender = Column(String, nullable=False)
 
     def __init__(self, name, age, gender):
         self.name = name

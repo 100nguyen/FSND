@@ -1,13 +1,12 @@
 import os
 import unittest
 import json
-import random
 from flask_sqlalchemy import SQLAlchemy
 
 from app import create_app
 from models import setup_db, Movie, Actor
-from settings import DB_NAME, DB_USER, DB_PASSWORD, \
-    CASTING_ASSISTANT_TOKEN, CASTING_DIRECTOR_TOKEN, EXECUTIVE_PRODUCER_TOKEN
+from settings import CASTING_ASSISTANT_TOKEN, CASTING_DIRECTOR_TOKEN,\
+    EXECUTIVE_PRODUCER_TOKEN
 
 
 class CastingAgencyTestCase(unittest.TestCase):
@@ -15,26 +14,33 @@ class CastingAgencyTestCase(unittest.TestCase):
 
     def setUp(self):
         """Define test variables and initialize app."""
+
+        self.casting_assistant_auth = f'Bearer {CASTING_ASSISTANT_TOKEN}'
+        self.casting_director_auth = f'Bearer {CASTING_DIRECTOR_TOKEN}'
+        self.executive_producer_auth = f'Bearer {EXECUTIVE_PRODUCER_TOKEN}'
+
+        self.new_movie = {
+            "title": "Lego Ego",
+            "release_date": "01/06/2023"
+        }
+
+        self.movie_with_release_date = {
+            "release_date": "07/04/2023"
+        }
+
+        self.new_actor = {
+            "name": "Zach Zeroku",
+            "age": 55,
+            "gender": "Male",
+        }
+
+        self.actor_with_age_change = {
+            "age": 22,
+        }
+
         self.app = create_app()
         self.client = self.app.test_client
-        self.casting_assistant_token = CASTING_ASSISTANT_TOKEN
-        self.casting_director_token = CASTING_DIRECTOR_TOKEN
-        self.executive_producer_token = EXECUTIVE_PRODUCER_TOKEN
-
         setup_db(self.app)
-
-        with self.app.app_context():
-            self.db = SQLAlchemy()
-            self.db.init_app(self.app)
-
-        self.app = create_app()
-        self.client = self.app.test_client
-        self.db_path = 'postgresql://{}:{}@{}/{}'.format(DB_USER,
-                                                         DB_PASSWORD,
-                                                         'localhost:5432',
-                                                         DB_NAME)
-
-        setup_db(self.app, self.db_path)
 
         # binds the app to the current context
         with self.app.app_context():
@@ -55,10 +61,7 @@ class CastingAgencyTestCase(unittest.TestCase):
     def test_get_movies_by_casting_assistant_with_auth_200(self):
         response = self.client().get(
             '/movies',
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.casting_assistant_token)
-            })
+            headers={'Authorization': self.casting_assistant_auth})
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
@@ -67,10 +70,7 @@ class CastingAgencyTestCase(unittest.TestCase):
     def test_get_actors_by_casting_assistant_with_auth_200(self):
         response = self.client().get(
             '/actors',
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.casting_assistant_token)
-            })
+            headers={'Authorization': self.casting_assistant_auth})
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
@@ -91,14 +91,9 @@ class CastingAgencyTestCase(unittest.TestCase):
     def test_post_movies_by_casting_assistant_without_auth_403(self):
         response = self.client().post(
             '/movies',
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.casting_assistant_token)
-            },
-            json={
-                "title": "American Made",
-                "release_date": "05/12/2018",
-            })
+            headers={'Authorization': self.casting_assistant_auth},
+            json=self.new_movie
+        )
 
         data = json.loads(response.data)
 
@@ -107,173 +102,126 @@ class CastingAgencyTestCase(unittest.TestCase):
     def test_post_actors_by_casting_assistant_without_auth_403(self):
         response = self.client().post(
             '/actors',
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.casting_assistant_token)
-            },
-            json={
-                "name": "Brandon",
-                "gender": "Male",
-                "age": 16
-            })
+            headers={'Authorization': self.casting_assistant_auth},
+            json=self.new_actor
+        )
+
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 403)
 
     def test_patch_movies_by_casting_assistant_without_auth_403(self):
-        random_id = random.choice([movie.id for movie in Movie.query.all()])
         response = self.client().patch(
-            '/movies/{}'.format(random_id),
-            headers={"Authorization": "Bearer {}".format(
-                self.casting_assistant_token)
-            },
-            json={
-                "title": "Joker",
-                "release_date": "10/01/2019"
-            })
+            '/movies/1',
+            headers={'Authorization': self.casting_assistant_auth},
+            json=self.movie_with_release_date
+        )
 
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 403)
 
     def test_patch_actors_by_casting_assistant_without_auth_403(self):
-        random_id = random.choice([actor.id for actor in Actor.query.all()])
-        response = self.client().patch('/actors/{}'.format(random_id),
-                                       headers={
-            "Authorization": "Bearer {}".format(self.casting_assistant_token)
-        },
-            json={
-            "name": "David",
-            "gender": "other",
-            "age": 10
-        })
+        response = self.client().patch(
+            '/actors/2',
+            headers={'Authorization': self.casting_assistant_auth},
+            json=self.actor_with_age_change
+        )
 
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 403)
 
     def test_delete_movies_by_casting_assistant_without_auth_403(self):
-        random_id = random.choice([movie.id for movie in Movie.query.all()])
         response = self.client().delete(
-            'movies/{}'.format(random_id),
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.casting_assistant_token)
-            }
+            'movies/1',
+            headers={'Authorization': self.casting_assistant_auth}
         )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 403)
 
     def test_delete_actors_by_casting_assistant_without_auth_403(self):
-        random_id = random.choice([actor.id for actor in Actor.query.all()])
         response = self.client().delete(
-            'actors/{}'.format(random_id),
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.casting_assistant_token)
-            }
+            'actors/2',
+            headers={'Authorization': self.casting_assistant_auth}
         )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 403)
 
-    def test_post_actors_by_executive_producer_with_auth_200(self):
+    def test_post_actors_by_casting_director_with_auth_200(self):
         response = self.client().post(
             '/actors',
-            headers={
-                "Authorization": "Bearer {}"
-                .format(self.executive_producer_token)
-            },
-            json={
-                "name": "Lio Messi",
-                "gender": "Male",
-                "age": 25,
-            })
+            headers={'Authorization': self.casting_director_auth},
+            json=self.new_actor
+        )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
+        self.assertEqual(len(data['actors']), 1)
 
     def test_post_movies_by_executive_producer_with_auth_200(self):
         response = self.client().post(
             '/movies',
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.executive_producer_token)
-            },
-            json={
-                'title': 'Prestige',
-                'release_date': '01/01/2005'
-            })
+            headers={'Authorization': self.executive_producer_auth},
+            json=self.new_movie
+        )
 
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
+        self.assertEqual(len(data['movies']), 1)
 
     def test_patch_movies_by_casting_director_with_auth_200(self):
-        random_id = random.choice([movie.id for movie in Movie.query.all()])
         response = self.client().patch(
-            '/movies/{}'.format(random_id),
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.casting_director_token)
-                },
-            json={
-                'title': 'Joker',
-                'release_date': '10/01/2019'
-                })
+            '/movies/2',
+            headers={'Authorization': self.casting_director_auth},
+            json=self.movie_with_release_date
+        )
 
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
+        self.assertEqual(len(data['movies']), 1)
 
     def test_patch_actors_by_casting_director_with_auth_200(self):
-        random_id = random.choice([actor.id for actor in Actor.query.all()])
         response = self.client().patch(
-            '/actors/{}'.format(random_id),
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.casting_director_token)
-                    },
-            json={
-                'name': 'Jamal Mashburn',
-                'gender': "Male",
-                'age': 50
-                })
+            '/actors/1',
+            headers={'Authorization': self.casting_director_auth},
+            json=self.actor_with_age_change
+        )
 
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
+        self.assertEqual(len(data['actors']), 1)
 
     def test_delete_movies_by_executive_producer_with_auth_200(self):
-        random_id = random.choice([movie.id for movie in Movie.query.all()])
         response = self.client().delete(
-            'movies/{}'.format(random_id),
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.executive_producer_token)
-                    })
+            'movies/1',
+            headers={'Authorization': self.executive_producer_auth}
+        )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
+        self.assertEqual(data['deleted_id'], 1)
 
     def test_delete_actors_by_executive_producer_with_auth_200(self):
-        random_id = random.choice([actor.id for actor in Actor.query.all()])
         response = self.client().delete(
-            'actors/{}'.format(random_id),
-            headers={
-                "Authorization": "Bearer {}".format(
-                    self.executive_producer_token)
-                    })
+            'actors/2',
+            headers={'Authorization': self.executive_producer_auth}
+        )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'], True)
+        self.assertEqual(data['deleted_id'], 2)
 
 
 # Make the tests conveniently executable

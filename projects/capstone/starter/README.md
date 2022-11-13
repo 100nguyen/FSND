@@ -49,7 +49,7 @@ Use all of the concepts and the skills taught in the courses to build an API fro
 - Deploying Applications
 
 ## URL location for the hosted API
-
+**Heroku git URL:** https://git.heroku.com/heroku-capstone-444y.git
 
 ## Getting Started
 
@@ -79,7 +79,7 @@ We recommend working within a virtual environment whenever using Python for proj
 
 1. Create an account with [Auth0] (https://auth0.com/)
 2. Select a unique tenant domain
-3. Create a new, single page web application
+3. Create a new Regular Web Application
 4. Create a new API
     - in API Settings:
         - Enable RBAC

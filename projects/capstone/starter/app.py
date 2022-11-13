@@ -67,6 +67,9 @@ def create_app(test_config=None):
     def create_movie(token):
         body = request.get_json()
 
+        if body is None:
+            abort(400)
+
         try:
 
             movie = Movie(
@@ -100,9 +103,13 @@ def create_app(test_config=None):
         movie = Movie.query.filter(Movie.id == id).one_or_none()
 
         if movie is None:
+            print(f'Movie with <{id}> not found!')
             abort(404)
 
         body = request.get_json()
+
+        if body is None:
+            abort(400)
 
         req_title = body.get('title', None)
         req_release_date = body.get('release_date', None)
@@ -110,11 +117,11 @@ def create_app(test_config=None):
         try:
             if req_title is not None:
                 movie.title = req_title
-                movie.update()
 
             if req_release_date is not None:
                 movie.release_date = req_release_date
-                movie.update()
+
+            movie.update()
         except Exception:
             abort(422)
 
@@ -141,6 +148,7 @@ def create_app(test_config=None):
         movie = Movie.query.filter(Movie.id == id).one_or_none()
 
         if movie is None:
+            print(f'Movie with <{id}> not found!')
             abort(404)
 
         try:
@@ -189,6 +197,9 @@ def create_app(test_config=None):
     def create_actor(token):
         body = request.json
 
+        if body is None:
+            abort(400)
+
         try:
 
             actor = Actor(
@@ -224,9 +235,13 @@ def create_app(test_config=None):
         actor = Actor.query.filter(Actor.id == id).one_or_none()
 
         if actor is None:
+            print(f'Actor with <{id}> not found!')
             abort(404)
 
         body = request.get_json()
+
+        if body is None:
+            abort(400)
 
         req_name = body.get('name', None)
         req_age = body.get('age', None)
@@ -235,15 +250,14 @@ def create_app(test_config=None):
         try:
             if req_name is not None:
                 actor.name = req_name
-                actor.update()
 
             if req_age is not None:
                 actor.age = req_age
-                actor.update()
 
             if req_gender is not None:
                 actor.gender = req_gender
-                actor.update()
+
+            actor.update()
 
         except Exception:
             abort(422)
@@ -271,6 +285,7 @@ def create_app(test_config=None):
         actor = Actor.query.filter(Actor.id == id).one_or_none()
 
         if actor is None:
+            print(f'Actor with <{id}> not found!')
             abort(404)
 
         try:
@@ -286,6 +301,17 @@ def create_app(test_config=None):
         )
 
     # Error Handling
+
+    '''
+    implement error handler for 400
+    '''
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            'success': False,
+            'error': 400,
+            'message': 'bad request'
+        }), 400
 
     '''
     implement error handler for 422
